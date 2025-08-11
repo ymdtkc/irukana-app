@@ -1,90 +1,689 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>irukana-app</title>
-    <link rel="stylesheet" href="./styles.css" />
-  </head>
-  <body>
-    <header class="app-header">
-      <h1 class="app-title">irukana-app</h1>
-      <button id="inviteButton" class="btn primary">招待リンクをLINEで送る</button>
-    </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>週末ヒマ共有モック v15.4 Gradient Bold（LINE個別ボタン・ソフト）</title>
+  <style>
+    /* ===== Tokens (Light, bold) ===== */
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --card-2: #ffffff;
+      --text: #0f172a;      /* slate-900 */
+      --subtext: #505b6b;   /* darker subtle */
+      --border: #d7dde7;    /* darker than v15.2 */
 
-    <main class="container">
-      <section class="group-header">
-        <h2 class="group-title">グループ詳細</h2>
-        <div class="status">
-          ステータス: <span id="publishStatus" class="badge">未登録</span>
+      /* Multicolor brand gradient (bold saturation) */
+      --grad-a: #2fd3da; /* aqua */
+      --grad-b: #5a6bff; /* indigo */
+      --grad-c: #ff5fa0; /* pink */
+      --grad-d: #12d8a9; /* mint */
+
+      /* State */
+      --accent: #10b981;   /* emerald-500 */
+      --danger: #ef4444;   /* red-500 */
+      --danger-2: #b91c1c; /* red-700 */
+
+      /* Focus */
+      --focus-ring: 0 0 0 3px rgba(90, 107, 255, .48);
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, "Noto Sans JP", sans-serif;
+      color: var(--text);
+      letter-spacing: 0.2px;
+      background:
+        radial-gradient(1000px 520px at 12% -10%, rgba(47,211,218,.40) 0%, transparent 60%),
+        radial-gradient(1000px 520px at 88% -15%, rgba(255,95,160,.36) 0%, transparent 55%),
+        radial-gradient(800px 420px at 50% -30%, rgba(90,107,255,.36) 0%, transparent 60%),
+        var(--bg);
+    }
+
+    header {
+      position: sticky; top: 0; z-index: 10;
+      padding: 12px 16px;
+      background: rgba(255,255,255,.88);
+      backdrop-filter: blur(12px) saturate(1.22);
+      border-bottom: 1px solid rgba(15,23,42,.10);
+    }
+    header h1 { margin: 0 0 4px; font-size: 18px; line-height: 1.35; }
+    header p { margin: 0; color: var(--subtext); font-size: 12px; }
+
+    main.container { max-width: 560px; margin: 12px auto 120px; padding: 0 12px; }
+
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .row-left { display: flex; align-items: center; gap: 8px; }
+    .stack { display: flex; flex-direction: column; gap: 12px; }
+    .subtle { color: var(--subtext); font-size: 12px; }
+
+    /* ===== Cards ===== */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow: 0 1px 2px rgba(16,24,40,.06), 0 14px 34px rgba(16,24,40,.10);
+    }
+
+    /* ===== Buttons ===== */
+    .btn { appearance: none; cursor: pointer; border-radius: 12px; border: 1px solid var(--border); padding: 12px 14px; font-size: 15px; line-height: 1; min-height: 44px; transition: transform .08s ease, box-shadow .22s ease, background-color .15s ease; }
+    .btn:hover { box-shadow: 0 8px 22px rgba(16,24,40,.12); transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    .btn.small { padding: 8px 10px; font-size: 13px; min-height: 34px; border-radius: 9999px; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Primary: bold multicolor pill with sheen */
+    .btn.primary {
+      position: relative; border: 0; border-radius: 9999px; color: #fff; font-weight: 800; letter-spacing: .02em;
+      background: linear-gradient(135deg, var(--grad-a), var(--grad-b), var(--grad-c)) 0% 0% / 240% 240%;
+      box-shadow: 0 10px 28px rgba(90,107,255,.50), inset 0 1px 0 rgba(255,255,255,.40);
+      transition: transform .08s ease, box-shadow .24s ease, background-position .8s ease;
+    }
+    .btn.primary:hover { background-position: 100% 0%; box-shadow: 0 18px 36px rgba(90,107,255,.54); }
+    .btn.primary::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen; opacity: .95; background: linear-gradient(to top left, rgba(255,255,255,.36), rgba(255,255,255,0) 45%); }
+
+    /* Ghost: bold gradient border */
+    .btn.ghost {
+      color: var(--text);
+      background:
+        linear-gradient(#ffffff, #ffffff) padding-box,
+        linear-gradient(135deg, rgba(47,211,218,.95), rgba(90,107,255,.95), rgba(255,95,160,.95)) border-box;
+      border: 1px solid transparent;
+    }
+
+    /* Danger: modern red gradient */
+    .btn.danger { border: 0; color: #fff; background: linear-gradient(135deg, #ff6b6b, #ef4444, #b91c1c); box-shadow: 0 8px 22px rgba(239,68,68,.36); }
+
+    /* LINE button (softer tone) */
+    .btn.line {
+      border: 1px solid #cfe9db;
+      color: #0f5132; /* dark green text for contrast */
+      background: linear-gradient(135deg, #eefaf3, #dcf5e7); /* much lighter greens */
+      box-shadow: 0 3px 10px rgba(6, 199, 85, .12);
+    }
+    .btn.line:hover {
+      background: linear-gradient(135deg, #e6f7ee, #d3f1e2);
+      box-shadow: 0 6px 16px rgba(6, 199, 85, .16);
+    }
+
+    .btn:focus-visible, .chip-btn:focus-visible, .group-card:focus-visible, .card:focus-visible {
+      outline: none; box-shadow: var(--focus-ring);
+    }
+
+    /* ===== Groups list ===== */
+    .groups { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    .group-card { position: relative; cursor: pointer; transition: box-shadow .24s ease, transform .08s ease; outline: none; }
+    .group-card:hover { transform: translateY(-1px); }
+    .group-title { font-weight: 800; font-size: 15px; margin-bottom: 6px; }
+    .kv { display: flex; gap: 6px; align-items: center; color: var(--subtext); font-size: 12px; }
+
+    /* Status chips */
+    .chip { border: 1px solid var(--border); border-radius: 999px; padding: 2px 8px; font-size: 12px; }
+    .on  { background: #def6ee; color: #145a41; border-color: #b6e6d4; }
+    .off { background: #e9e3ff; color: #3f2f93; border-color: #cfc3ff; }
+
+    /* ===== Member strip ===== */
+    .member-strip { display: flex; align-items: center; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
+    .member-strip::-webkit-scrollbar { height: 6px; }
+    .member-strip::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 4px; }
+    .avatar { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: #0f172a; font-weight: 800; border: 1px solid rgba(0,0,0,0.06); }
+
+    /* ===== Selectable date chips ===== */
+    .chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .chip-btn { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; justify-content: center; min-height: 76px; padding: 10px; border-radius: 14px; border: 1px solid var(--border); background: #f5f8fe; color: var(--text); text-align: left; transition: transform .06s ease, box-shadow .2s ease, background-color .15s ease; }
+    .chip-btn .day { font-weight: 700; font-size: 14px; }
+    .chip-btn .state { font-size: 12px; color: #4f5968; }
+    .chip-btn.selectable:hover { box-shadow: 0 10px 28px rgba(16,24,40,.14); transform: translateY(-1px); }
+    .chip-btn.selected {
+      background:
+        linear-gradient(#fff, #fff) padding-box,
+        linear-gradient(135deg, var(--grad-a), var(--grad-b), var(--grad-c)) border-box;
+      border: 1px solid transparent;
+    }
+    .chip-btn.submitted { background: #e7ecff; color: #334155; border-style: dashed; }
+    .chip-btn.withdrawn { background: #ffe4e4; color: #7f1d1d; border-color: #ffbcbc; }
+
+    /* ===== Day cards ===== */
+    .day-cards { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    .day-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; gap: 8px; color: var(--text); }
+    .badges { display: flex; gap: 6px; align-items: center; }
+    .badge { background: linear-gradient(180deg, #dce8ff, #cfe0ff); border: 1px solid #b9d0ff; color: #1e4b97; padding: 2px 8px; border-radius: 999px; font-size: 12px; }
+    .badge.withdraw { background: linear-gradient(180deg, #ffdfe4, #ffd2d8); border-color: #ffb7c0; color: #7a1a1a; }
+
+    .people-list { display: flex; flex-direction: column; gap: 8px; }
+    .section-title { font-size: 12px; color: var(--subtext); margin: 6px 0 2px; }
+    .person { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-radius: 12px; background: #fff; border: 1px solid var(--border); box-shadow: 0 1px 2px rgba(16,24,40,.06); }
+    .person.withdrawn { background: #fbfbfb; border-color: #f1f1f1; }
+    .persona { display: flex; align-items: center; gap: 10px; }
+    .name { font-size: 15px; display: flex; align-items: center; gap: 6px; }
+    .note { color: #505b6b; font-size: 12px; margin-top: 2px; line-height: 1.4; }
+    .tag { font-size: 11px; color: #7a1a1a; border: 1px solid #ffb7c0; background: #ffdfe4; border-radius: 999px; padding: 1px 6px; margin-left: 6px; }
+
+    /* ===== Toast ===== */
+    .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 16px; background: #ffffff; border: 1px solid var(--border); color: var(--text); padding: 10px 14px; border-radius: 12px; box-shadow: 0 14px 40px rgba(16,24,40,.18); opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 99; font-size: 14px; }
+    .toast.show { opacity: 1; transform: translate(-50%, -6px); }
+
+    /* ===== Modal ===== */
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.40); display: none; align-items: center; justify-content: center; z-index: 120; padding: 16px; }
+    .modal { width: 100%; max-width: 560px; background: #ffffff; border: 1px solid var(--border); border-radius: 16px; padding: 12px; box-shadow: 0 26px 80px rgba(16,24,40,.22); }
+    .modal h3 { margin: 0 0 8px; font-size: 16px; }
+    .modal textarea { width: 100%; min-height: 96px; background: #f5f8fe; color: var(--text); border: 1px solid var(--border); border-radius: 10px; padding: 10px; font-family: inherit; font-size: 14px; }
+    .modal .row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px; }
+    .modal .note { color: #505b6b; font-size: 12px; margin-top: 6px; }
+    .modal a { color: #2563eb; }
+    .select { width: 100%; background: #f5f8fe; color: var(--text); border: 1px solid var(--border); border-radius: 10px; padding: 10px; font-size: 14px; }
+
+    /* ===== Sticky action bar (glass, bold) ===== */
+    .action-bar { position: fixed; left: 0; right: 0; bottom: 0; padding: 10px 12px; background: rgba(255,255,255,.88); border-top: 1px solid rgba(15,23,42,.10); display: flex; align-items: center; gap: 12px; z-index: 110; backdrop-filter: blur(12px) saturate(1.22); }
+    .action-bar .summary { flex: 1; color: #334155; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* ===== Lock/empty state ===== */
+    .locked-card {
+      display: grid; gap: 6px; padding: 12px; border-radius: 12px; color: #334155;
+      background:
+        linear-gradient(#ffffff, #ffffff) padding-box,
+        linear-gradient(135deg, rgba(47,211,218,.55), rgba(90,107,255,.55)) border-box;
+      border: 1px dashed transparent;
+    }
+
+    /* Motion safety */
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <div id="toast" class="toast" role="status" aria-live="polite">通知</div>
+
+  <script>
+    // ===== Date & util helpers =====
+    const pad2 = (n) => String(n).padStart(2, '0');
+    const ymd = (d) => `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+    const weekdayJ = (d) => ['日','月','火','水','木','金','土'][d.getDay()];
+    const fmtJP = (d) => `${d.getMonth()+1}/${d.getDate()}(${weekdayJ(d)})`;
+    const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const today = startOfDay(new Date());
+    const $ = (sel, root=document) => root.querySelector(sel);
+
+    const startOfWeek = (d) => { const s = startOfDay(d); const dow = s.getDay(); const offsetToMonday = (dow + 6) % 7; const mon = new Date(s); mon.setDate(s.getDate() - offsetToMonday); return mon; };
+    const weekKeyOf = (d) => ymd(startOfWeek(d));
+    function getWeekendDatesByMonday(monday){ const fri = new Date(monday); fri.setDate(monday.getDate()+4); const sat = new Date(monday); sat.setDate(monday.getDate()+5); const sun = new Date(monday); sun.setDate(monday.getDate()+6); return [fri, sat, sun]; }
+    function weekendRangeLabelByMonday(monday) { const [f,,su] = getWeekendDatesByMonday(monday); return `${f.getMonth()+1}/${f.getDate()}〜${su.getMonth()+1}/${su.getDate()}`; }
+
+    // Deterministic color by id
+    function seedRandom(str) { let h = 2166136261 >>> 0; for (let i=0;i<str.length;i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return () => ((h = Math.imul(h ^ (h>>>15), 2246822507) ^ Math.imul(h ^ (h>>>13), 3266489909)) >>> 0) / 4294967296; }
+    function colorFromId(id) { const rnd = seedRandom(id)(); const hue = Math.floor(rnd * 360); return `hsl(${hue} 80% 70%)`; }
+
+    function showToast(message) { const toast = document.getElementById('toast'); toast.textContent = message; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 1800); }
+
+    // Focus trap for modals
+    function trapFocus(modal) {
+      const focusable = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if (!focusable.length) return () => {};
+      const first = focusable[0]; const last = focusable[focusable.length - 1];
+      function handler(e){
+        if (e.key === 'Tab') {
+          if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+          else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        } else if (e.key === 'Escape') { modal.dispatchEvent(new CustomEvent('esc-close')); }
+      }
+      modal.addEventListener('keydown', handler);
+      return () => modal.removeEventListener('keydown', handler);
+    }
+
+    // ===== Storage helpers =====
+    const SS = window.sessionStorage;
+    const groupsKey = 'groups:v15';
+    const lastGroupKey = 'lastGroupId:v15';
+    const WD_PREFIX = 'withdraw:'; // withdraw:<groupId> -> { [dateKey]: {tag, memo} }
+    const AV_PREFIX = 'myAvail:';   // myAvail:<groupId>:<weekKey> -> [dateKeys]
+
+    function saveGroups() { SS.setItem(groupsKey, JSON.stringify(groups)); }
+    function loadGroups() { try { const j = SS.getItem(groupsKey); return j ? JSON.parse(j) : null; } catch { return null; } }
+
+    function availKey(groupId, weekKey){ return `${AV_PREFIX}${groupId}:${weekKey}`; }
+    function loadMyAvail(groupId, weekKey) { try { return new Set(JSON.parse(SS.getItem(availKey(groupId, weekKey)) || '[]')); } catch { return new Set(); } }
+    function saveMyAvail(groupId, weekKey, set) { SS.setItem(availKey(groupId, weekKey), JSON.stringify([...set])); }
+
+    function loadMyWithdrawals(groupId) { try { return JSON.parse(SS.getItem(WD_PREFIX+groupId) || '{}'); } catch { return {}; } }
+    function saveMyWithdrawals(groupId, obj) { SS.setItem(WD_PREFIX+groupId, JSON.stringify(obj)); }
+
+    // ===== Mock data (通常状態) =====
+    const currentUser = { id: 'me', name: 'あなた' };
+    const membersMaster = [
+      { id: 'u1', name: '田中 花子' },
+      { id: 'u2', name: '佐藤 健' },
+      { id: 'u3', name: '鈴木 陽菜' },
+      { id: 'u4', name: '山本 大輔' },
+      { id: 'u5', name: '中村 愛' },
+      { id: 'u6', name: '小林 優' },
+      { id: 'u7', name: '高橋 直子' },
+    ];
+
+    let groups = loadGroups() || [
+      { id: 'g1', name: '飲み仲間', members: ['me','u1','u2','u3'] },
+      { id: 'g2', name: '大学同期', members: ['me','u4','u5','u6','u7'] }
+    ];
+
+    function memberById(id) { if (id==='me') return currentUser; return membersMaster.find(m => m.id === id) || { id, name: 'Unknown' }; }
+
+    // Random free users per date (excluding me) for visual
+    function listFreeUsersFor(groupId, dateKey) {
+      const g = groups.find(x => x.id === groupId);
+      if (!g) return [];
+      const rnd = seedRandom(groupId + '|' + dateKey);
+      const free = [];
+      g.members.forEach(id => { if (id === 'me') return; if (rnd() > 0.5) free.push(id); });
+      return free.map(memberById);
+    }
+
+    function isUnlocked(groupId, weekKey){ return loadMyAvail(groupId, weekKey).size > 0; }
+
+    function createDummyGroup() {
+      const gid = 'g' + Date.now();
+      const name = '新しいグループ';
+      groups.push({ id: gid, name, members: ['me','u1','u2'] });
+      saveGroups();
+      return gid;
+    }
+
+    // ===== Share helpers (LINE個別) =====
+    function openLINEWithText(text){
+      const encoded = encodeURIComponent(text);
+      const lineUrl = `https://line.me/R/msg/text/?${encoded}`;
+      window.open(lineUrl, '_blank');
+    }
+    function shareLineToPerson(person, date, group){
+      const url = new URL(location.href);
+      url.searchParams.set('group', group.id);
+      const dateLabel = fmtJP(date);
+      const range = weekendRangeLabelByMonday(startOfWeek(date));
+      const msg = `${person.name}さん、${dateLabel}空いてたらどう？\n（${group.name}の今週末ヒマ共有 ${range}）\n${url.toString()}`;
+      if (navigator.share) {
+        navigator.share({ title: '今週末ヒマ共有', text: msg, url: url.toString() }).catch(()=> openLINEWithText(msg));
+      } else {
+        openLINEWithText(msg);
+      }
+    }
+
+    // ===== Pages =====
+    function renderListPage(root) {
+      const thisMonday = startOfWeek(today); const thisWeekKey = weekKeyOf(today);
+      root.innerHTML = `
+        <header>
+          <h1 id="appTitle">グループ一覧</h1>
+          <p id="appSubtitle">グループをタップすると詳細。空き登録は詳細画面で行います。</p>
+        </header>
+        <main class="container"> 
+          <section class="stack" id="listBody"></section>
+        </main>
+      `;
+
+      const listBody = document.getElementById('listBody');
+
+      const headerRow = document.createElement('div'); headerRow.className = 'row';
+      headerRow.innerHTML = `
+        <h2 style="margin:0">あなたのグループ</h2>
+        <button class="btn ghost small" id="newGroupBtn">＋ 新しいグループ</button>
+      `;
+      listBody.appendChild(headerRow);
+      document.getElementById('newGroupBtn').addEventListener('click', () => {
+        const gid = createDummyGroup();
+        const url = new URL(location.href); url.searchParams.set('group', gid); history.pushState({}, '', url.toString()); renderDetailPage(root, gid, thisMonday);
+      });
+
+      // Sort: unlocked first
+      const sorted = [...groups].sort((a,b)=>{
+        const ua = isUnlocked(a.id, thisWeekKey) ? 1 : 0; const ub = isUnlocked(b.id, thisWeekKey) ? 1 : 0; return ub-ua || a.name.localeCompare(b.name);
+      });
+
+      const grid = document.createElement('div'); grid.className = 'groups';
+      sorted.forEach(g => {
+        const unlocked = isUnlocked(g.id, thisWeekKey);
+        const card = document.createElement('div');
+        card.className = 'card group-card';
+        card.setAttribute('role','button');
+        card.setAttribute('tabindex','0');
+        card.innerHTML = `
+          <div class="group-title">${g.name}</div>
+          <div class="kv">メンバー ${g.members.length}人</div>
+          <div class="kv">あなたの今週末: <span class="chip ${unlocked?'on':'off'}">${unlocked?'公開中':'未登録'}</span></div>
+        `;
+        const go = () => {
+          const url = new URL(location.href); url.searchParams.set('group', g.id); history.pushState({}, '', url.toString()); renderDetailPage(root, g.id, thisMonday);
+        };
+        card.addEventListener('click', go);
+        card.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); go(); } });
+        grid.appendChild(card);
+      });
+      listBody.appendChild(grid);
+    }
+
+    function renderDetailPage(root, gid, baseMonday) {
+      const g = groups.find(x => x.id === gid);
+      if (!g) { const url = new URL(location.href); url.searchParams.delete('group'); history.replaceState({}, '', url.toString()); return renderListPage(root); }
+      baseMonday = baseMonday || startOfWeek(today); const weekKey = ymd(baseMonday);
+      try { SS.setItem(lastGroupKey, gid); } catch {}
+
+      root.innerHTML = `
+        <header>
+          <div class="row-left" style="justify-content:space-between; align-items:center;">
+            <button class="btn ghost small" id="backBtn">← 一覧へ</button>
+            <div style="flex:1"></div>
+          </div>
+          <h1 id="appTitle" style="margin-top:8px">${g.name}</h1>
+          <p id="appSubtitle">このグループで今週末のヒマな日を登録すると、みんなの状況（ヒマ/辞退）が見えます。</p>
+        </header>
+        <main class="container">
+          <section class="stack">
+            <div class="subtle">${g.name}｜メンバー ${g.members.length}人｜今週末 ${weekendRangeLabelByMonday(baseMonday)}</div>
+
+            <div id="membersCard" class="card">
+              <div class="row" style="align-items:center;">
+                <h2 style="margin:0">メンバー</h2>
+                <button class="btn ghost small" id="leaveBtn" aria-label="このグループを退会する">退会する</button>
+              </div>
+              <div id="memberStrip" class="member-strip" aria-label="メンバー一覧（アイコンのみ）"></div>
+            </div>
+
+            <div class="card">
+              <h2>今週末のヒマ登録（このグループ）</h2>
+              <div class="subtle">対象: 金・土・日の3日（${weekendRangeLabelByMonday(baseMonday)}）</div>
+              <div id="dayChips" class="chips" style="margin-top:8px"></div>
+              <div class="subtle" style="margin-top:6px">提出後の取り消しはできません。都合が悪くなった場合は「辞退」をご利用ください。</div>
+            </div>
+
+            <div id="peopleCard" class="card">
+              <h2>このグループのみんなの状況（今週末）</h2>
+              <div id="peopleContent"></div>
+            </div>
+          </section>
+        </main>
+
+        <div id="actionBar" class="action-bar">
+          <div id="selSummary" class="summary">選択: なし</div>
+          <button id="submitBtn" class="btn primary" disabled>登録する（今週末）</button>
         </div>
-      </section>
+      `;
 
-      <section class="member-strip" aria-label="メンバー一覧">
-        <!-- メンバー帯は常時表示 -->
-        <div class="avatar" title="田中">田</div>
-        <div class="avatar" title="佐藤">佐</div>
-        <div class="avatar" title="鈴木">鈴</div>
-        <div class="avatar" title="伊藤">伊</div>
-        <div class="avatar" title="高橋">高</div>
-      </section>
+      // Back button
+      document.getElementById('backBtn').addEventListener('click', () => {
+        const url = new URL(location.href); url.searchParams.delete('group'); history.pushState({}, '', url.toString()); renderListPage(root);
+      });
 
-      <section class="actions">
-        <button id="openRegister" class="btn">空きを登録する</button>
-        <button id="withdraw" class="btn danger">辞退する</button>
-      </section>
+      // Member strip
+      const memberStrip = document.getElementById('memberStrip');
+      g.members.forEach(id => {
+        const m = memberById(id);
+        const el = document.createElement('div');
+        el.className = 'avatar' + (id==='me' ? ' me' : '');
+        el.style.background = colorFromId(m.id);
+        el.title = m.name; el.textContent = m.name[0];
+        memberStrip.appendChild(el);
+      });
 
-      <section class="everyone-status">
-        <h3>みんなの状況</h3>
-        <div id="lockOverlay" class="lock">
-          空き登録をすると、みんなの状況を閲覧できます。
-        </div>
-        <ul id="statusList" class="status-list" aria-live="polite" aria-busy="true">
-          <li>田中: 8/20 公開中</li>
-          <li>佐藤: 8/21 公開中</li>
-          <li>鈴木: 8/22 公開中</li>
-          <li>伊藤: 8/23 公開中</li>
-          <li>高橋: 8/24 公開中</li>
-        </ul>
-      </section>
+      // Leave group
+      document.getElementById('leaveBtn').addEventListener('click', () => openLeaveModal(gid));
 
-      <section id="registerPanel" class="panel hidden" aria-label="空き登録">
-        <h3>空き登録（日単位）</h3>
-        <p class="help">過去の日付は登録できません。</p>
-        <div id="dateGrid" class="date-grid" role="listbox" aria-label="日付を選択">
-          <!-- JSで日付チップを生成します -->
-        </div>
-      </section>
-    </main>
+      const dayChips = document.getElementById('dayChips');
+      const submitBtn = document.getElementById('submitBtn');
+      const selSummary = document.getElementById('selSummary');
+      const peopleContent = document.getElementById('peopleContent');
 
-    <!-- スティッキーなアクションバー -->
-    <div id="stickyBar" class="sticky hidden" aria-live="polite">
-      <div class="summary">
-        選択: <span id="selectedCount">0</span> 日
-      </div>
-      <div class="actions">
-        <button id="clearSelection" class="btn">クリア</button>
-        <button id="submitPublish" class="btn primary" disabled>公開する</button>
-      </div>
-    </div>
+      const selectedDays = new Set();
 
-    <!-- 招待情報モーダル（説明のみ） -->
-    <dialog id="inviteModal" class="modal">
-      <form method="dialog" class="modal-content">
-        <h3>招待リンクをLINEで送る</h3>
-        <p>
-          現在は説明のみです。次のステップでLINEシェア（LIFF）を有効化します。<br />
-          このボタンは常時表示し、押下でこの説明を表示します。
-        </p>
-        <menu class="modal-actions">
-          <button value="close" class="btn">閉じる</button>
-        </menu>
-      </form>
-    </dialog>
+      function renderPeopleArea(){
+        peopleContent.innerHTML = '';
+        if (!isUnlocked(g.id, weekKey)) {
+          const lock = document.createElement('div'); lock.className = 'locked-card';
+          lock.innerHTML = `あなたが今週末のヒマを公開すると、ここにみんなの状況が表示されます。`;
+          peopleContent.appendChild(lock);
+        } else {
+          const wrap = document.createElement('div'); wrap.id = 'dayCards'; wrap.className = 'day-cards'; peopleContent.appendChild(wrap);
+          renderDayCards();
+        }
+      }
 
-    <!-- トースト（aria-live） -->
-    <div class="toast" aria-live="polite" aria-atomic="true" id="toast"></div>
+      function buildChips() {
+        const my = loadMyAvail(g.id, weekKey);
+        const myW = loadMyWithdrawals(g.id);
+        dayChips.innerHTML = '';
+        const [fri, sat, sun] = getWeekendDatesByMonday(baseMonday);
+        [fri, sat, sun].forEach(d => {
+          const key = ymd(d);
+          const isSubmitted = my.has(key);
+          const isWithdrawn = !!myW[key];
+          const isPast = startOfDay(d) < today;
+          const chip = document.createElement('button');
+          chip.className = 'chip-btn';
+          chip.setAttribute('aria-pressed', selectedDays.has(key) ? 'true' : 'false');
+          chip.innerHTML = `<div class="day">${fmtJP(d)}</div><div class="state"></div>`;
+          const state = chip.querySelector('.state');
 
-    <script src="./script.js"></script>
-  </body>
+          if (isSubmitted) {
+            chip.classList.add('submitted');
+            if (isWithdrawn) { chip.classList.add('withdrawn'); state.textContent = '辞退済'; }
+            else { state.textContent = '提出済'; }
+            chip.disabled = true;
+          } else {
+            chip.classList.add('selectable');
+            if (isPast) { state.textContent = '終了'; chip.disabled = true; }
+            else if (selectedDays.has(key)) { chip.classList.add('selected'); state.textContent = '選択中'; }
+            else { state.textContent = 'タップで選択'; }
+            if (!chip.disabled) {
+              chip.addEventListener('click', () => {
+                if (selectedDays.has(key)) selectedDays.delete(key); else selectedDays.add(key);
+                updateSubmit(); buildChips();
+              });
+            }
+          }
+
+          dayChips.appendChild(chip);
+        });
+      }
+
+      function updateSubmit() {
+        submitBtn.disabled = selectedDays.size === 0;
+        const labels = [...selectedDays].map(k => { const [y,m,d] = k.split('-').map(Number); return fmtJP(new Date(y, m-1, d)); });
+        selSummary.textContent = labels.length ? `選択: ${labels.join('、')}` : '選択: なし';
+      }
+
+      function openConfirmSheet(summaryText, onConfirm) {
+        const backdrop = document.createElement('div'); backdrop.className = 'modal-backdrop'; backdrop.style.display = 'flex';
+        backdrop.innerHTML = `
+          <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+            <h3 id="confirmTitle">この内容で公開しますか？</h3>
+            <div class="subtle" style="margin-bottom:8px">公開すると、このグループの全員にあなたの名前とアイコンが表示されます。</div>
+            <div class="card" style="padding:8px; margin-bottom:8px">${summaryText}</div>
+            <div class="row">
+              <button class="btn ghost" id="ccEdit">修正する</button>
+              <button class="btn primary" id="ccConfirm">公開する</button>
+            </div>
+          </div>`;
+        document.body.appendChild(backdrop);
+        const modal = backdrop.querySelector('.modal'); const cleanup = trapFocus(modal);
+        function close(){ cleanup(); document.body.removeChild(backdrop); }
+        backdrop.addEventListener('click', (e)=>{ if(e.target===backdrop) close(); });
+        modal.addEventListener('esc-close', close);
+        backdrop.addEventListener('esc-close', close);
+        $('#ccEdit', backdrop).addEventListener('click', close);
+        $('#ccConfirm', backdrop).addEventListener('click', ()=>{ onConfirm(); close(); });
+        setTimeout(()=>{ $('#ccConfirm', backdrop).focus(); }, 0);
+      }
+
+      submitBtn.addEventListener('click', () => {
+        const labels = [...selectedDays].map(k => { const [y,m,d] = k.split('-').map(Number); const date = new Date(y, m-1, d); return `<span class="chip" style="background:#def6ee;color:#145a41;border-color:#b6e6d4">${fmtJP(date)}</span>`; }).join(' ');
+        openConfirmSheet('公開日: ' + (labels || 'なし'), () => {
+          const my = loadMyAvail(g.id, weekKey);
+          selectedDays.forEach(k => my.add(k));
+          saveMyAvail(g.id, weekKey, my);
+          selectedDays.clear();
+          showToast('公開しました');
+          buildChips(); updateSubmit();
+          renderPeopleArea();
+        });
+      });
+
+      function renderDayCards() {
+        const wrap = document.getElementById('dayCards'); if (!wrap) return; wrap.innerHTML = '';
+        const my = loadMyAvail(g.id, weekKey);
+        const myW = loadMyWithdrawals(g.id);
+        const [fri, sat, sun] = getWeekendDatesByMonday(baseMonday);
+        [fri, sat, sun].forEach(d => {
+          const key = ymd(d);
+          const card = document.createElement('div'); card.className = 'card';
+          const freeUsers = listFreeUsersFor(g.id, key);
+          const unlocked = my.has(key);
+          const withdrawn = !!myW[key];
+          const badges = [];
+          if (unlocked && !withdrawn) badges.push('<span class="badge">あなた: ヒマ</span>');
+          if (withdrawn) badges.push('<span class="badge withdraw">あなた: 辞退</span>');
+
+          card.innerHTML = `
+            <div class="day-card-header">
+              <div class="row-left"><h3 style="margin:0">${fmtJP(d)}</h3><div class="badges">${badges.join('')}</div></div>
+              <div class="row-left" id="dayActions-${key}"></div>
+            </div>
+            <div class="people-list">
+              <div class="section">
+                <div class="section-title">ヒマな人</div>
+                <div id="free-${key}"></div>
+              </div>
+              <div class="section" id="withdraw-section-${key}" style="display:${withdrawn?'block':'none'}">
+                <div class="section-title">辞退</div>
+                <div class="person withdrawn">
+                  <div class="persona">
+                    <div class="avatar" style="background:${colorFromId('me')}">あ</div>
+                    <div>
+                      <div class="name">あなた <span class="tag">${(myW[key]||{}).tag||'辞退'}</span></div>
+                      ${ (myW[key]&&myW[key].memo) ? `<div class="note">${myW[key].memo}</div>` : '' }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+
+          // Actions per day
+          const actions = card.querySelector(`#dayActions-${key}`);
+          if (unlocked && !withdrawn) {
+            const btn = document.createElement('button'); btn.className = 'btn small ghost'; btn.textContent = 'この日を辞退する';
+            btn.addEventListener('click', ()=> openWithdrawModal(g.id, key, () => { renderDayCards(); buildChips(); }));
+            actions.appendChild(btn);
+          } else if (withdrawn) {
+            const btn = document.createElement('button'); btn.className = 'btn small ghost'; btn.textContent = '辞退を取り消す';
+            btn.addEventListener('click', ()=> { const w = loadMyWithdrawals(g.id); delete w[key]; saveMyWithdrawals(g.id, w); showToast('辞退を取り消しました'); renderDayCards(); buildChips(); });
+            actions.appendChild(btn);
+          }
+
+          // Render free users with per-person LINE button
+          const freeWrap = card.querySelector(`#free-${key}`);
+          if (freeUsers.length === 0) {
+            const empty = document.createElement('div'); empty.className='person'; empty.innerHTML = '<div class="subtle">まだ表示できる人がいません</div>'; freeWrap.appendChild(empty);
+          } else {
+            freeUsers.forEach(u => {
+              const row = document.createElement('div'); row.className = 'person';
+              row.innerHTML = `
+                <div class="persona">
+                  <div class="avatar" style="background:${colorFromId(u.id)}">${u.name[0]}</div>
+                  <div>
+                    <div class="name">${u.name}</div>
+                  </div>
+                </div>
+                <button class="btn small line" aria-label="${u.name}さんにLINE">LINEする</button>
+              `;
+              const btn = row.querySelector('button');
+              btn.addEventListener('click', () => shareLineToPerson(u, d, g));
+              freeWrap.appendChild(row);
+            });
+          }
+
+          wrap.appendChild(card);
+        });
+      }
+
+      function openLeaveModal(groupId){
+        const backdrop = document.createElement('div'); backdrop.className = 'modal-backdrop'; backdrop.style.display = 'flex';
+        backdrop.innerHTML = `
+          <div class="modal" role="dialog" aria-modal="true" aria-labelledby="leaveTitle">
+            <h3 id="leaveTitle">このグループを退会しますか？</h3>
+            <div class="subtle" style="margin-bottom:8px">退会しても他のメンバーには通知されません。</div>
+            <div class="row">
+              <button class="btn ghost" id="lvCancel">やめる</button>
+              <button class="btn danger" id="lvConfirm">退会する</button>
+            </div>
+          </div>`;
+        document.body.appendChild(backdrop);
+        const modal = backdrop.querySelector('.modal'); const cleanup = trapFocus(modal);
+        function close(){ cleanup(); document.body.removeChild(backdrop); }
+        backdrop.addEventListener('click', (e)=>{ if(e.target===backdrop) close(); });
+        modal.addEventListener('esc-close', close);
+        backdrop.addEventListener('esc-close', close);
+        $('#lvCancel', backdrop).addEventListener('click', close);
+        $('#lvConfirm', backdrop).addEventListener('click', ()=>{
+          groups = groups.filter(g=>g.id!==groupId); saveGroups();
+          showToast('退会しました');
+          const url = new URL(location.href); url.searchParams.delete('group'); history.pushState({}, '', url.toString()); renderListPage(document.getElementById('app'));
+          close();
+        });
+        setTimeout(()=>{ $('#lvConfirm', backdrop).focus(); }, 0);
+      }
+
+      function openWithdrawModal(groupId, dateKey, onDone){
+        const backdrop = document.createElement('div'); backdrop.className = 'modal-backdrop'; backdrop.style.display = 'flex';
+        backdrop.innerHTML = `
+          <div class="modal" role="dialog" aria-modal="true" aria-labelledby="wdTitle">
+            <h3 id="wdTitle">辞退の理由（任意）</h3>
+            <select id="wdTag" class="select" aria-label="辞退タグ">
+              <option value="予定が入った">予定が入った</option>
+              <option value="体調不良">体調不良</option>
+              <option value="その他">その他</option>
+            </select>
+            <textarea id="wdMemo" placeholder="メモ（20文字程度まで）"></textarea>
+            <div class="note">この内容はグループのメンバーに表示されます。</div>
+            <div class="row">
+              <button class="btn ghost" id="wdCancel">やめる</button>
+              <button class="btn danger" id="wdConfirm">辞退する</button>
+            </div>
+          </div>`;
+        document.body.appendChild(backdrop);
+        const modal = backdrop.querySelector('.modal'); const cleanup = trapFocus(modal);
+        function close(){ cleanup(); document.body.removeChild(backdrop); }
+        backdrop.addEventListener('click', (e)=>{ if(e.target===backdrop) close(); });
+        modal.addEventListener('esc-close', close);
+        backdrop.addEventListener('esc-close', close);
+        $('#wdCancel', backdrop).addEventListener('click', close);
+        $('#wdConfirm', backdrop).addEventListener('click', () =>{
+          const tag = $('#wdTag', backdrop).value; let memo = $('#wdMemo', backdrop).value.trim(); if (memo.length>20) memo = memo.slice(0,20);
+          const w = loadMyWithdrawals(groupId); w[dateKey] = { tag, memo }; saveMyWithdrawals(groupId, w);
+          showToast('辞退しました');
+          close();
+          if (typeof onDone === 'function') onDone();
+        });
+        setTimeout(()=>{ $('#wdConfirm', backdrop).focus(); }, 0);
+      }
+
+      // Init section in detail page
+      buildChips();
+      updateSubmit();
+      renderPeopleArea();
+    }
+
+    // ===== App bootstrap & router =====
+    function renderAppFromURL() {
+      const root = document.getElementById('app');
+      const url = new URL(location.href);
+      const gid = url.searchParams.get('group');
+      if (gid) renderDetailPage(root, gid, startOfWeek(today));
+      else renderListPage(root);
+    }
+
+    window.addEventListener('popstate', renderAppFromURL);
+    // First render
+    renderAppFromURL();
+  </script>
+</body>
 </html>
