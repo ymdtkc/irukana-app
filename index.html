@@ -175,7 +175,7 @@
     .modal .row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px; }
     .modal .note { color: #505b6b; font-size: 12px; margin-top: 6px; }
     .modal a { color: #2563eb; }
-    .select { width: 100%; background: #f5f8fe; color: var(--text); border: 1px solid var(--border); border-radius: 10px; padding: 10px; font-size: 14px; }
+    .select { width: 100%; background: #f5f8fe; color: #text; border: 1px solid var(--border); border-radius: 10px; padding: 10px; font-size: 14px; }
 
     /* ===== Sticky action bar (glass, bold) ===== */
     .action-bar { position: fixed; left: 0; right: 0; bottom: 0; padding: 10px 12px; background: rgba(255,255,255,.88); border-top: 1px solid rgba(15,23,42,.10); display: flex; align-items: center; gap: 12px; z-index: 110; backdrop-filter: blur(12px) saturate(1.22); }
@@ -251,7 +251,7 @@
     function loadMyWithdrawals(groupId) { try { return JSON.parse(SS.getItem(WD_PREFIX+groupId) || '{}'); } catch { return {}; } }
     function saveMyWithdrawals(groupId, obj) { SS.setItem(WD_PREFIX+groupId, JSON.stringify(obj)); }
 
-    // ===== Mock data (通常状態) =====
+    // ===== Mock data =====
     const currentUser = { id: 'me', name: 'あなた' };
     const membersMaster = [
       { id: 'u1', name: '田中 花子' },
@@ -491,16 +491,17 @@
         selSummary.textContent = labels.length ? `選択: ${labels.join('、')}` : '選択: なし';
       }
 
+      // 確認ポップアップ（文言を「登録」に統一）
       function openConfirmSheet(summaryText, onConfirm) {
         const backdrop = document.createElement('div'); backdrop.className = 'modal-backdrop'; backdrop.style.display = 'flex';
         backdrop.innerHTML = `
           <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
-            <h3 id="confirmTitle">この内容で公開しますか？</h3>
-            <div class="subtle" style="margin-bottom:8px">公開すると、このグループの全員にあなたの名前とアイコンが表示されます。</div>
+            <h3 id="confirmTitle">この内容で登録しますか？</h3>
+            <div class="subtle" style="margin-bottom:8px">登録すると、このグループの全員に空いてることが伝わります。</div>
             <div class="card" style="padding:8px; margin-bottom:8px">${summaryText}</div>
             <div class="row">
               <button class="btn ghost" id="ccEdit">修正する</button>
-              <button class="btn primary" id="ccConfirm">公開する</button>
+              <button class="btn primary" id="ccConfirm">登録する</button>
             </div>
           </div>`;
         document.body.appendChild(backdrop);
@@ -516,7 +517,7 @@
 
       submitBtn.addEventListener('click', () => {
         const labels = [...selectedDays].map(k => { const [y,m,d] = k.split('-').map(Number); const date = new Date(y, m-1, d); return `<span class="chip" style="background:#def6ee;color:#145a41;border-color:#b6e6d4">${fmtJP(date)}</span>`; }).join(' ');
-        openConfirmSheet('公開日: ' + (labels || 'なし'), () => {
+        openConfirmSheet('登録する日：' + (labels || 'なし'), () => {
           const my = loadMyAvail(g.id, weekKey);
           selectedDays.forEach(k => my.add(k));
           saveMyAvail(g.id, weekKey, my);
