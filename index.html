@@ -315,7 +315,7 @@
       root.innerHTML = `
         <header>
           <h1 id="appTitle">グループ一覧</h1>
-          <p id="appSubtitle">グループをタップすると詳細。空き登録は詳細画面で行います。</p>
+          <p id="appSubtitle">暇な日をグループごとに公開設定できます。</p>
         </header>
         <main class="container"> 
           <section class="stack" id="listBody"></section>
@@ -350,7 +350,7 @@
         card.innerHTML = `
           <div class="group-title">${g.name}</div>
           <div class="kv">メンバー ${g.members.length}人</div>
-          <div class="kv">あなたの今週末: <span class="chip ${unlocked?'on':'off'}">${unlocked?'公開中':'未登録'}</span></div>
+          <div class="kv">あなたの予定: <span class="chip ${unlocked?'on':'off'}">${unlocked?'公開中':'未登録'}</span></div>
         `;
         const go = () => {
           const url = new URL(location.href); url.searchParams.set('group', g.id); history.pushState({}, '', url.toString()); renderDetailPage(root, g.id, thisMonday);
@@ -375,7 +375,7 @@
             <div style="flex:1"></div>
           </div>
           <h1 id="appTitle" style="margin-top:8px">${g.name}</h1>
-          <p id="appSubtitle">このグループで今週末のヒマな日を登録すると、みんなの状況（ヒマ/辞退）が見えます。</p>
+          <p id="appSubtitle">暇な日を登録すると、みんなの登録状況が見えるようになります。</p>
         </header>
         <main class="container">
           <section class="stack">
@@ -384,20 +384,20 @@
             <div id="membersCard" class="card">
               <div class="row" style="align-items:center;">
                 <h2 style="margin:0">メンバー</h2>
-                <button class="btn ghost small" id="leaveBtn" aria-label="このグループを退会する">退会する</button>
+                <button class="btn ghost small" id="leaveBtn" aria-label="このグループから抜ける">グループから抜ける</button>
               </div>
               <div id="memberStrip" class="member-strip" aria-label="メンバー一覧（アイコンのみ）"></div>
             </div>
 
             <div class="card">
-              <h2>今週末のヒマ登録（このグループ）</h2>
+              <h2>あなたの暇な日</h2>
               <div class="subtle">対象: 金・土・日の3日（${weekendRangeLabelByMonday(baseMonday)}）</div>
               <div id="dayChips" class="chips" style="margin-top:8px"></div>
-              <div class="subtle" style="margin-top:6px">提出後の取り消しはできません。都合が悪くなった場合は「辞退」をご利用ください。</div>
+              <div class="subtle" style="margin-top:6px">提出後の取り消しはできません。都合が悪くなった場合は「辞退」で報告しましょう。</div>
             </div>
 
             <div id="peopleCard" class="card">
-              <h2>このグループのみんなの状況（今週末）</h2>
+              <h2>このグループの今週末の予定</h2>
               <div id="peopleContent"></div>
             </div>
           </section>
@@ -405,7 +405,7 @@
 
         <div id="actionBar" class="action-bar">
           <div id="selSummary" class="summary">選択: なし</div>
-          <button id="submitBtn" class="btn primary" disabled>登録する（今週末）</button>
+          <button id="submitBtn" class="btn primary" disabled>登録する</button>
         </div>
       `;
 
@@ -466,7 +466,7 @@
           if (isSubmitted) {
             chip.classList.add('submitted');
             if (isWithdrawn) { chip.classList.add('withdrawn'); state.textContent = '辞退済'; }
-            else { state.textContent = '提出済'; }
+            else { state.textContent = '登録済'; }
             chip.disabled = true;
           } else {
             chip.classList.add('selectable');
@@ -549,7 +549,7 @@
             </div>
             <div class="people-list">
               <div class="section">
-                <div class="section-title">ヒマな人</div>
+                <div class="section-title">空いてる人</div>
                 <div id="free-${key}"></div>
               </div>
               <div class="section" id="withdraw-section-${key}" style="display:${withdrawn?'block':'none'}">
