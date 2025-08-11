@@ -1,12 +1,90 @@
 <!doctype html>
-<html>
+<html lang="ja">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>irukana-app</title>
+    <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <h1>irukana-app</h1>
-    <p>ここから開発を始めます。</p>
+    <header class="app-header">
+      <h1 class="app-title">irukana-app</h1>
+      <button id="inviteButton" class="btn primary">招待リンクをLINEで送る</button>
+    </header>
+
+    <main class="container">
+      <section class="group-header">
+        <h2 class="group-title">グループ詳細</h2>
+        <div class="status">
+          ステータス: <span id="publishStatus" class="badge">未登録</span>
+        </div>
+      </section>
+
+      <section class="member-strip" aria-label="メンバー一覧">
+        <!-- メンバー帯は常時表示 -->
+        <div class="avatar" title="田中">田</div>
+        <div class="avatar" title="佐藤">佐</div>
+        <div class="avatar" title="鈴木">鈴</div>
+        <div class="avatar" title="伊藤">伊</div>
+        <div class="avatar" title="高橋">高</div>
+      </section>
+
+      <section class="actions">
+        <button id="openRegister" class="btn">空きを登録する</button>
+        <button id="withdraw" class="btn danger">辞退する</button>
+      </section>
+
+      <section class="everyone-status">
+        <h3>みんなの状況</h3>
+        <div id="lockOverlay" class="lock">
+          空き登録をすると、みんなの状況を閲覧できます。
+        </div>
+        <ul id="statusList" class="status-list" aria-live="polite" aria-busy="true">
+          <li>田中: 8/20 公開中</li>
+          <li>佐藤: 8/21 公開中</li>
+          <li>鈴木: 8/22 公開中</li>
+          <li>伊藤: 8/23 公開中</li>
+          <li>高橋: 8/24 公開中</li>
+        </ul>
+      </section>
+
+      <section id="registerPanel" class="panel hidden" aria-label="空き登録">
+        <h3>空き登録（日単位）</h3>
+        <p class="help">過去の日付は登録できません。</p>
+        <div id="dateGrid" class="date-grid" role="listbox" aria-label="日付を選択">
+          <!-- JSで日付チップを生成します -->
+        </div>
+      </section>
+    </main>
+
+    <!-- スティッキーなアクションバー -->
+    <div id="stickyBar" class="sticky hidden" aria-live="polite">
+      <div class="summary">
+        選択: <span id="selectedCount">0</span> 日
+      </div>
+      <div class="actions">
+        <button id="clearSelection" class="btn">クリア</button>
+        <button id="submitPublish" class="btn primary" disabled>公開する</button>
+      </div>
+    </div>
+
+    <!-- 招待情報モーダル（説明のみ） -->
+    <dialog id="inviteModal" class="modal">
+      <form method="dialog" class="modal-content">
+        <h3>招待リンクをLINEで送る</h3>
+        <p>
+          現在は説明のみです。次のステップでLINEシェア（LIFF）を有効化します。<br />
+          このボタンは常時表示し、押下でこの説明を表示します。
+        </p>
+        <menu class="modal-actions">
+          <button value="close" class="btn">閉じる</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <!-- トースト（aria-live） -->
+    <div class="toast" aria-live="polite" aria-atomic="true" id="toast"></div>
+
+    <script src="./script.js"></script>
   </body>
 </html>
