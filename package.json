@@ -1,0 +1,12 @@
+{
+  "name": "irukana-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo \"dev server is not set yet\"",
+    "build": "echo \"build is not set yet\"",
+    "start": "echo \"start is not set yet\""
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
